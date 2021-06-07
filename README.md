@@ -10,3 +10,11 @@ The requirements.txt file should list all Python libraries that your notebooks d
 ```
 pip install -r requirements.txt
 ```
+
+### Result
+The result will be two independent .csv files. One containing information about the process and the entity it belongs and the second one containing the votes (envelopes) in each of the processes.
+
+```
+process.csv
+test.csv
+```
