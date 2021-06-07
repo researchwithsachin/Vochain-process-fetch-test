@@ -1,12 +1,14 @@
+import urllib.request
 import csv
 import os
+import sys
+import urllib
 import json
 import requests
-import pandas as pd
 import time
-import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+import requests.packages.urllib3
+requests.packages.urllib3.disable_warnings()
+
 
 process_list_complete = []
 
@@ -31,7 +33,7 @@ def get_process_list_trial():
         params = {"request": {"from": b, "method": "getProcessList",
                               "sourceNetworkId": "", }, "id": "847", }
         process_list_response = requests.post(
-            url=url, data=json.dumps(params)).json()
+            url=url, data=json.dumps(params), verify=False).json()
         process_list = process_list_response['response']['processList']
 
         for i in range(0, len(process_list)):
@@ -39,7 +41,7 @@ def get_process_list_trial():
             params1 = {"request": {"method": "getProcessInfo",
                                    "processId": process_list[i], }, "id": "410", }
             process_list_data = requests.post(
-                url=url, data=json.dumps(params1)).json()
+                url=url, data=json.dumps(params1), verify=False).json()
             process_info = process_list_data['response']['process']
             f.writerow([process_info['entityId'],
                         process_info['entityIndex'],
@@ -65,19 +67,41 @@ def get_votes():
     f.writerow(['process_id', 'nullifier', 'height', 'weight'])
 
     for i in range(0, len(process_list_complete)):
+        retries = 1
+        success = False
+        while not success:
+            try:
+                response = urllib.request.urlopen(url)
+                success = True
+            except Exception as e:
+                wait = retries * 5
+                print('Error! Waiting %s secs and re-trying...' % wait)
+                sys.stdout.flush()
+                time.sleep(wait)
+                retries += 1
         c = True
         d = 0
         while c:
-            time.sleep(5)
             params1 = {"request": {"from": d, "method": "getEnvelopeList",
                                    "processId": process_list_complete[i]}, "id": "356", }
             envelope_list_data = requests.post(
                 url=url, data=json.dumps(params1), verify=False).json()
             if 'envelopes' in envelope_list_data['response'].keys():
                 envelope_list = envelope_list_data['response']['envelopes']
-
                 for j in range(0, len(envelope_list)):
-                    time.sleep(5)
+                    inner_retries = 1
+                    inner_success = False
+                    while not inner_success:
+                        try:
+                            inner_response = urllib.request.urlopen(url)
+                            inner_success = True
+                        except Exception as e:
+                            inner_wait = inner_retries * 5
+                            print('Error! Waiting %s secs and re-trying...' %
+                                  inner_wait)
+                            sys.stdout.flush()
+                            time.sleep(inner_wait)
+                            inner_retries += 1
                     params2 = {"request": {"method": "getEnvelope",
                                            "nullifier": envelope_list[j]['nullifier']}, "id": "81", }
                     nullifier_details = requests.post(
