@@ -10,9 +10,16 @@ The requirements.txt file should list all Python libraries that your notebooks d
 ```
 pip install -r requirements.txt
 ```
+### Run the Script
+
+Use Python 3 (version 3.8.6) to run the script
+
+```
+python vochain_script.py
+```
 
 ### Result
-The result will be two independent .csv files. One containing information about the process and the entity it belongs and the second one containing the votes (envelopes) in each of the processes.
+The result will be two independent .csv files. One containing information about the process and the entity it belongs and the second one containing the details of the votes (envelopes) in each of the processes.
 
 ```
 process.csv
