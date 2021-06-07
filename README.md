@@ -19,7 +19,7 @@ python vochain_script.py
 ```
 
 ### Result
-The result will be two independent .csv files. One containing information about the process and the entity it belongs and the second one containing the details of the votes (envelopes) in each of the processes.
+The result will be two independent .csv files. One containing information about the processes and the entity the belong to and the second one containing the details of the votes (envelopes) in each of the processes.
 
 ```
 process.csv
